@@ -34,6 +34,7 @@ mkdir -p /var/spool/squid
 /usr/lib/squid/security_file_certgen -c -s /var/cache/squid/ssl_db -M 4MB
 
 tail -F /var/log/squid/access.log 2>/dev/null &
+tail -F /var/log/squid/cache.log 2>/dev/null &
 tail -F /var/log/squid/error.log 2>/dev/null &
 
 echo "Starting squid"
