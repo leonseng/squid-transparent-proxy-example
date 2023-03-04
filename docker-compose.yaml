@@ -2,8 +2,6 @@ services:
   client:
     build:
       context: ./client
-    depends_on:
-      - squid
     cap_add:
       - NET_ADMIN
   squid:

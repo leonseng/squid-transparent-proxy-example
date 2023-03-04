@@ -1,7 +1,13 @@
 #!/bin/sh
 set -e
 
-PROXY_IP=$(dig squid +short)
+PROXY_IP=""
+
+while [ -z "$PROXY_IP" ]
+do
+  PROXY_IP=$(dig squid +short)
+done
+
 iptables -t mangle -A OUTPUT -p tcp --dport 80 -j MARK --set-mark 1
 iptables -t mangle -A OUTPUT -p tcp --dport 443 -j MARK --set-mark 1
 
