@@ -1,12 +1,9 @@
-FROM leonseng/squid-openssl
+FROM alpine
 
-RUN apt-get update \
-  && apt-get install -y iptables iproute2 sudo
+RUN apk add --no-cache iptables
+RUN apk add --no-cache squid openssl
 
-RUN apt-get install -y tcpdump \
-  && rm -rf /var/lib/apt/lists/*
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod -R 755 /entrypoint.sh
 
-COPY entrypoint.sh /sbin/entrypoint.sh
-RUN chmod -R 755 /sbin/entrypoint.sh
-
-ENTRYPOINT ["/sbin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

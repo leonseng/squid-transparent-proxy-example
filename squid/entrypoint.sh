@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 echo "Configuring iptables..."
@@ -30,7 +30,8 @@ mkdir -p /etc/squid/ssl \
   && sh -c "cat /etc/squid/ssl/squid.key /etc/squid/ssl/squid.crt >> /etc/squid/ssl/squid.pem"
 
 echo "Initialize the SSL storage database for dynamically generated SSL certs"
-/usr/lib/squid/security_file_certgen -c -s /var/spool/squid/ssl_db -M 4MB
+mkdir -p /var/spool/squid
+/usr/lib/squid/security_file_certgen -c -s /var/cache/squid/ssl_db -M 4MB
 
 tail -F /var/log/squid/access.log 2>/dev/null &
 tail -F /var/log/squid/error.log 2>/dev/null &
