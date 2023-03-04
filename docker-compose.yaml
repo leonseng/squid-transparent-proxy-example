@@ -1,0 +1,20 @@
+services:
+  client:
+    build:
+      context: ./client
+    depends_on:
+      - squid
+    cap_add:
+      - NET_ADMIN
+  squid:
+    build:
+      context: ./squid
+    volumes:
+      - ./squid/squid.conf:/etc/squid/squid.conf:ro
+      - ./squid/allowed-domains.txt:/etc/squid/allowed-domains.txt:ro
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv4.conf.default.rp_filter: 0
+      net.ipv4.conf.default.accept_source_route: 0
+    cap_add:
+      - NET_ADMIN

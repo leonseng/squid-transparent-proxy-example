@@ -1,0 +1,2 @@
+httpbin.org
+.google.com
