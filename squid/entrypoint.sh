@@ -8,8 +8,7 @@ PROXY_HTTP_PORT=3128
 PROXY_HTTPS_PORT=3129
 
 # prevent forward looping as Squid proxies the original request
-iptables -t nat -A PREROUTING -s $PROXY_IP -p tcp --dport 80 -j ACCEPT
-iptables -t nat -A PREROUTING -s $PROXY_IP -p tcp --dport 443 -j ACCEPT
+iptables -t nat -A PREROUTING -s $PROXY_IP -p tcp -m multiport --dports 80,443 -j ACCEPT
 
 # redirect all HTTP and HTTPS traffic routed to Squid towards the transparent proxy ports
 iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination $PROXY_IP:$PROXY_HTTP_PORT
@@ -19,8 +18,7 @@ iptables -t nat -A PREROUTING -p tcp --dport 443 -j DNAT --to-destination $PROXY
 iptables -t nat -A POSTROUTING -j MASQUERADE
 
 # prevent access to the transparent proxy ports from external sources
-iptables -t mangle -A PREROUTING -p tcp --dport $PROXY_HTTP_PORT -j DROP
-iptables -t mangle -A PREROUTING -p tcp --dport $PROXY_HTTPS_PORT -j DROP
+iptables -t mangle -A PREROUTING -p tcp -m multiport --dports $PROXY_HTTP_PORT,$PROXY_HTTPS_PORT -j DROP
 
 echo "Creating SSL cert for Squid..."
 mkdir -p /etc/squid/ssl \
@@ -35,7 +33,6 @@ mkdir -p /var/spool/squid
 
 tail -F /var/log/squid/access.log 2>/dev/null &
 tail -F /var/log/squid/cache.log 2>/dev/null &
-tail -F /var/log/squid/error.log 2>/dev/null &
 
 echo "Starting squid"
 squid -N "$@"
